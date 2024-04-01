@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\RoleEnum;
 use App\Models\Seller;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -22,7 +23,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
-            'role_id' => 1,
+            'role_id' => RoleEnum::ADMIN,
             'remember_token' => Str::random(10)
         ]);
     }
