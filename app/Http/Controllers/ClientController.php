@@ -7,11 +7,19 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
+
+    use AuthorizesRequests;
+    public function __construct()
+    {
+        $this->authorizeResource(Client::class, 'client');
+    }
+
     /**
      * Display a listing of the resource.
      *
