@@ -36,8 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/clients', ClientController::class);
     Route::get('/sales', [SaleController::class, 'index']);
 
-    Route::get('/impersonate/{id}/login', [ImpersonateController::class, 'impersonate'])->name('impersonate');
-    Route::get('/impersonate/leaveImpersonate', [ImpersonateController::class, 'leaveImpersonate'])->name('impersonate.leaveImpersonate');
+    Route::get('/impersonate/{id}/login', [ImpersonateController::class, 'impersonate'])->middleware('can:impersonate')->name('impersonate');
+    Route::get('/impersonate/leaveImpersonate', [ImpersonateController::class, 'leaveImpersonate'])->middleware('can:leave-impersonate')->name('impersonate.leaveImpersonate');
 });
 
 Route::get('/sellers', Index::class)->middleware(['auth'])->name('sellers.index');

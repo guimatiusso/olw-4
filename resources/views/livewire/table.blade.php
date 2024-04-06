@@ -31,11 +31,13 @@
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">{{ data_get($item, $column['column']) }}</td>
                     @endforeach
 
-                    <th  class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">
-                        <a href="{{ route("impersonate", $item->user->id) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-white dark:hover:text-gray-400">
-                            {{__("Impersonate")}}
-                        </a>
-                    </th>
+                    @can('impersonate')
+                        <th  class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">
+                            <a href="{{ route("impersonate", $item->user->id) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-white dark:hover:text-gray-400">
+                                {{__("Impersonate")}}
+                            </a>
+                        </th>
+                    @endcan
 
                     @if($edit)
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">
