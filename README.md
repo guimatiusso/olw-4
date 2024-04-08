@@ -1,23 +1,25 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://banners.beyondco.de/OLW.png?theme=light&packageManager=&packageName=by+Beer+%26+Code&pattern=architect&style=style_1&description=OPEN+LARAVEL+WEEK&md=1&showWatermark=0&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg" width="650"></a></p>
 
-# Instalando o projeto
+# Project Installation
+The project make use of Docker through the *Laravel Sail* package in order to facilitate its local environment configuration. So, it is necessary that you have Docker Engine installed on your machine.
 
-O projeto se utiliza de contêineres Docker, através do pacote *Laravel Sail* para facilitar a configuração do ambiente de desenvolvimento. Portanto, é necessário que já possua o Docker e o Docker Compose instalados na máquina.
+Feel free to run the project on your local environment but this tutorial will not handle this situation.
 
-Você é livre para rodar o projeto em ambiente local mas esse texto não tratará essa situação. 
-
-Links para instalação e configuração de Docker:
+Links to Docker installation and config:
 
 - [Windows](https://docs.docker.com/docker-for-windows/install/)
 - [Linux (Debian based)](https://docs.docker.com/engine/install/ubuntu/) 
 
-### Passos para o rodar o projeto localmente:
+### Steps to run the project locally
 
 - Faça um clone do projeto para sua máquina local
+- Git clone it to your machine
 - Crie um arquivo `.env`, recomendamos usar `.env-example` como base
-- Adicione ou altere as chaves conforme sua necessidade
+- Create a `.env` file, we recommend using `.env-example` as example
+- You can add or alter as you may need
 - acesse a pasta do projeto via console (terminal/PowerShell/CMD)
-- execute o comando:
+- Access the project folder through a shell (terminal/PowerShell/CMD)
+- Run the following to install the packages on `composer.json`. Once it is finished, check if the *vendor* folder it is created.:
 ```shell
 docker run --rm \
     -u "$(id -u):$(id -g)" \
@@ -26,39 +28,40 @@ docker run --rm \
     laravelsail/php82-composer:latest \
     composer install --ignore-platform-reqs
  ```
-- Após finalizado processamento, execute o comando `./sail up -d`
+- After installation is done, run the following `./sail up` to get on containers going. Additionally, you can pass the `-d` parameter to run in unattached mode. The containers needed for this project are declared in the file `docker-compose.yml`.
+ 
+By default, it is not necessary any additional configuration on *.env* file. If you need to make changes to binding ports or database credential that is the right place to do it. 
 
-O primeiro comando realiza a instalação dos pacotes via composer especificados no arquivo `composer.json` e uma vez que a instalação termina, a pasta *vendor* passa a ficar disponível no projeto. O comando seguinte levanta os contêineres baseado na descrição de serviços feita no arquivo `docker-compose.yml`.
+# Working with Containers
 
-Por padrão, não é necessária nenhuma configuração no arquivo *.env* do projeto. Caso seja necessária alguma edição na configuração padrão (relacionado a binding ports ou credenciais de banco de dados), basta editar o arquivo *.env*. 
-
-# Trabalhando com Contêineres
-
-Uma vez que o projeto está rodando em cima de contêineres Docker, é clara a situação de que a máquina local não possui nenhum dos requisitos necessários para se trabalhar no projeto, assim, comandos como `php artisan`, `composer` ou `npm` não funcionarão localmente. Para executar comandos dentro de um dos contêineres do projeto, um `php artisan route:list` por exemplo, é preciso utilizar o docker para tal, como por exemplo:
+Once your project are running on Docker containers, you will not be able to run anything outside the docker containers like `php artisan`, `composer` or `npm`. These will not work properly, if you need to run any commands for your project, you have to do it like so:
 
 ```bash
-docker-compose exec \ #execução de um comando num contêiner existente
-    -u sail \ # especifica o nome do usuário a ser utilizado dentro do contêiner
-    projeto_laravel.test \ # especifica qual contêiner receberá o comando
-    php artisan route:list # qual o comando a ser executado
+docker-compose exec \ #Running command on existing container
+    -u sail \ # Especify the name of the user to be used inside the container
+    projeto_laravel.test \ # Especify which container will the command be run
+    php artisan route:list # Command to be executed
 ```
-
- A execução, dessa forma, se torna muito verbosa e trabalhosa, podendo levar a potenciais erros de execução. Assim, o *Laravel Sail* oferece um script chamado `sail` e localizado em *vendor/bin/*. Esse script permite que tais comandos sejam executados através de aliases para que o fluxo de desenvolvimento seja mais natural e menos complexo. Assim, para se executar o mesmo comando `php artisan route:list` com o script `sail` ficaria:
+The command execution make it very verbose causing potential errors to happen. So the *Laravel Sail* have a script named `sail` it is stored on *vendor/bin/*. This command allows that the commands on the example above can be run through aliases so that the development  can be more natural and less complex. Example:
 
  ```bash
  ./vendor/bin/sail artisan route:list
 
- #ou
+ #or
 
  ./vendor/bin/sail art route:list
  ```
 
-### Comandos disponíveis
+### Available commands
 
-Para conhecer os comandos disponíveis pelo script sail, execute `./vendor/bin/sail -h` para obter a listagem completa das opções com descrição.
+To know all the commands available by sail, you can run `./vendor/bin/sail -h` to obtain the full list with description and possible parameters.
 
-# Próximos passos
-Migrations são uma maneira de versionar as tabelas de sua base de dados. Para estruturar o seu banco de dados 
-- Execute `./vendor/bin/sail art migrate` para montar sua adicionar as tabelas ao seu banco
+# Next steps 
+Migrations are a way to version the database tables. To have your DB up and running 
+- Run `./vendor/bin/sail art migrate` to create the databases table
 
-- Execute `./vendor/bin/sail art db:seed` para popular o seu banco com dados fictícios
+- Run `./vendor/bin/sail art db:seed` to populate your database with fake data to run the project
+
+# Testing
+To run the tests made on the project:
+- Run `./vendor/bin/sail composer pest`
