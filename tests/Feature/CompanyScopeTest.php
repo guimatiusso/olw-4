@@ -63,3 +63,33 @@ test('seller user can only see sellers on his tenant', function () {
     auth()->loginUsingId($user1->id);
     $this->assertSame(11, Seller::count());
 });
+
+test('only allows admin users to impersonate users from the same company', function () {
+    $company1 = Company::factory()->create();
+    $company2 = Company::factory()->create();
+
+    $user1 = User::factory()
+        ->has(Seller::factory()->state(['company_id' => $company1->id]))
+        ->create(['role_id' => RoleEnum::SELLER]);
+
+    $admin = User::factory()
+        ->create(['role_id' => RoleEnum::ADMIN]);
+
+    $user2 = User::factory()
+        ->has(Seller::factory()->state(['company_id' => $company2->id]))
+        ->create(['role_id' => RoleEnum::SELLER]);
+
+    // Simulate trying to impersonate a user from a different company
+    $this->actingAs($user1)
+        ->get('/impersonate/' . $user2->id . '/login')
+        ->assertStatus(403); // 403 Forbidden
+
+    $this->actingAs($user2)
+        ->get('/impersonate/' . $user1->id . '/login')
+        ->assertStatus(403);
+
+    // Simulate admin user impersonating a user from the same company
+    $response = $this->actingAs($admin)
+        ->get('/impersonate/' . $user1->id . '/login')
+        ->assertStatus(302); // 302 Redirect (to the home page or dashboard, for example)
+});
